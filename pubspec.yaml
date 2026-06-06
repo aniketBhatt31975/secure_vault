@@ -1,0 +1,51 @@
+name: secure_vault
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.7
+
+  # DI
+  get_it: ^8.0.3
+
+  # Navigation
+  go_router: ^15.1.2
+
+  # Local DB
+  hive_flutter: ^1.1.0
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  drift: ^2.26.1
+  sqlite3_flutter_libs: ^0.5.30
+
+  # Encryption
+  encrypt: ^5.0.3
+  pointycastle: ^3.9.1
+
+  # Biometric + Secure Storage
+  local_auth: ^2.3.0
+  flutter_secure_storage: ^9.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+  # Code generation
+  drift_dev: ^2.26.1
+  build_runner: ^2.4.15
+
+  # Testing
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
