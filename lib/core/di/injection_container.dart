@@ -15,11 +15,7 @@ Future<void> initDependencies() async {
   final DbInterface db = HiveDatasource();
   await db.init();
   sl.registerSingleton<DbInterface>(db);
-
-  sl.registerLazySingleton<NoteRepository>(
-    () => NoteRepositoryImpl(db: sl()),
-  );
-
+  sl.registerLazySingleton<NoteRepository>(() => NoteRepositoryImpl(db: sl()));
   sl.registerLazySingleton(() => GetNotes(sl()));
   sl.registerLazySingleton(() => CreateNote(sl()));
   sl.registerLazySingleton(() => UpdateNote(sl()));

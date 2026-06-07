@@ -12,38 +12,51 @@ import 'route_names.dart';
 final appRouter = GoRouter(
   initialLocation: RouteNames.notes,
   routes: [
-    GoRoute(
-      path: RouteNames.notes,
+    ShellRoute(
       builder:
-          (context, state) => BlocProvider(
-            create: (context) {
-              return NotesCubit(
-                getNotes: sl.get(),
-                createNote: sl.get(),
-                updateNote: sl.get(),
-                deleteNote: sl.get(),
-                searchNotes: sl.get(),
-              );
-              // return const NotesListScreen();
-            },
-            child: NotesListScreen(),
+          (context, state, child) => BlocProvider<NotesCubit>(
+            create:
+                (_) => NotesCubit(
+                  getNotes: sl.get(),
+                  createNote: sl.get(),
+                  updateNote: sl.get(),
+                  deleteNote: sl.get(),
+                  searchNotes: sl.get(),
+                ),
+            child: child,
           ),
       routes: [
         GoRoute(
-          path: 'new',
-          builder: (context, state) => const NoteEditorScreen(),
-        ),
-        GoRoute(
-          path: ':id',
-          builder:
-              (context, state) =>
-                  NoteDetailScreen(id: state.pathParameters['id']!),
+          path: RouteNames.notes,
+          builder: (context, state) => const NotesListScreen(),
           routes: [
             GoRoute(
-              path: 'edit',
+              path: 'new',
               builder:
-                  (context, state) =>
-                      NoteEditorScreen(id: state.pathParameters['id']),
+                  (context, state) => Builder(
+                    builder: (context) {
+                      print(state.fullPath);
+                      return const NoteEditorScreen();
+                    },
+                  ),
+            ),
+            GoRoute(
+              path: ':id',
+              builder:
+                  (context, state) => Builder(
+                    builder: (context) {
+                      print(state.fullPath);
+                      return NoteDetailScreen(id: state.pathParameters['id']!);
+                    },
+                  ),
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder:
+                      (context, state) =>
+                          NoteEditorScreen(id: state.pathParameters['id']),
+                ),
+              ],
             ),
           ],
         ),
