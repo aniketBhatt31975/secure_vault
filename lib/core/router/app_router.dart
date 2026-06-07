@@ -25,11 +25,15 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: ':id',
-          builder: (context, state) => NoteDetailScreen(id: state.pathParameters['id']!),
+          builder:
+              (context, state) =>
+                  NoteDetailScreen(id: state.pathParameters['id']!),
           routes: [
             GoRoute(
               path: 'edit',
-              builder: (context, state) => NoteEditorScreen(id: state.pathParameters['id']),
+              builder:
+                  (context, state) =>
+                      NoteEditorScreen(id: state.pathParameters['id']),
             ),
           ],
         ),

@@ -1,11 +1,11 @@
 import 'package:get_it/get_it.dart';
 import '../../features/auth/data/datasources/biometric_datasource.dart';
 import '../../features/auth/data/datasources/keystore_channel.dart';
-import '../../features/auth/data/datasources/root_detection_channel.dart';
+
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/authenticate_biometric.dart';
-import '../../features/auth/domain/usecases/check_root.dart';
+
 import '../../features/auth/domain/usecases/get_encryption_key.dart';
 import '../../features/notes/data/datasources/local/db_interface.dart';
 import '../../features/notes/data/datasources/local/hive_datasource.dart';
@@ -24,22 +24,18 @@ Future<void> initDependencies() async {
   // Native channels — singletons, stateless wrappers around MethodChannels
   // -------------------------------------------------------------------------
   sl.registerLazySingleton<KeystoreChannel>(() => KeystoreChannel());
-  sl.registerLazySingleton<RootDetectionChannel>(() => RootDetectionChannel());
+
   sl.registerLazySingleton<BiometricDatasource>(() => BiometricDatasource());
 
   // -------------------------------------------------------------------------
   // Auth repository + use cases
   // -------------------------------------------------------------------------
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      biometricDatasource: sl(),
-      keystoreChannel: sl(),
-      rootDetectionChannel: sl(),
-    ),
+    () => AuthRepositoryImpl(biometricDatasource: sl(), keystoreChannel: sl()),
   );
 
   sl.registerLazySingleton(() => AuthenticateBiometric(sl()));
-  sl.registerLazySingleton(() => CheckRoot(sl()));
+
   sl.registerLazySingleton(() => GetEncryptionKey(sl()));
 
   // -------------------------------------------------------------------------

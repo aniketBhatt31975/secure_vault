@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:secure_vault/features/auth/presentation/cubit/auth_cubit.dart';
 import 'core/di/injection_container.dart';
 import 'core/router/app_router.dart';
 
@@ -15,10 +17,17 @@ class SecureVaultApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Secure Vault',
-      debugShowCheckedModeBanner: false,
-      routerConfig: appRouter,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AuthCubit(authenticateBiometric: sl.get()),
+        ),
+      ],
+      child: MaterialApp.router(
+        title: 'Secure Vault',
+        debugShowCheckedModeBanner: false,
+        routerConfig: appRouter,
+      ),
     );
   }
 }
