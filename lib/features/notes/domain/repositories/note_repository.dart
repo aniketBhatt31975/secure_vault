@@ -1,0 +1,10 @@
+import '../entities/note.dart';
+
+abstract class NoteRepository {
+  Future<List<Note>> getNotes();
+  Future<Note> getNoteById(String id);
+  Future<void> createNote(Note note);
+  Future<void> updateNote(Note note);
+  Future<void> deleteNote(String id);
+  Future<List<Note>> searchNotes(String query);
+}
