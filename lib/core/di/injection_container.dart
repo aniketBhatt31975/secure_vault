@@ -1,12 +1,4 @@
 import 'package:get_it/get_it.dart';
-import '../../features/auth/data/datasources/biometric_datasource.dart';
-import '../../features/auth/data/datasources/keystore_channel.dart';
-
-import '../../features/auth/data/repositories/auth_repository_impl.dart';
-import '../../features/auth/domain/repositories/auth_repository.dart';
-import '../../features/auth/domain/usecases/authenticate_biometric.dart';
-
-import '../../features/auth/domain/usecases/get_encryption_key.dart';
 import '../../features/notes/data/datasources/local/db_interface.dart';
 import '../../features/notes/data/datasources/local/hive_datasource.dart';
 import '../../features/notes/data/repositories/note_repository_impl.dart';
@@ -20,41 +12,12 @@ import '../../features/notes/domain/usecases/update_note.dart';
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
-  // -------------------------------------------------------------------------
-  // Native channels — singletons, stateless wrappers around MethodChannels
-  // -------------------------------------------------------------------------
-  sl.registerLazySingleton<KeystoreChannel>(() => KeystoreChannel());
-
-  sl.registerLazySingleton<BiometricDatasource>(() => BiometricDatasource());
-
-  // -------------------------------------------------------------------------
-  // Auth repository + use cases
-  // -------------------------------------------------------------------------
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(biometricDatasource: sl(), keystoreChannel: sl()),
-  );
-
-  sl.registerLazySingleton(() => AuthenticateBiometric(sl()));
-
-  sl.registerLazySingleton(() => GetEncryptionKey(sl()));
-
-  // -------------------------------------------------------------------------
-  // DB — swap HiveDatasource for DriftDatasource here to change the engine
-  // -------------------------------------------------------------------------
   final DbInterface db = HiveDatasource();
   await db.init();
   sl.registerSingleton<DbInterface>(db);
 
-  // -------------------------------------------------------------------------
-  // Encryption key — fetched once at startup from native Keystore
-  // -------------------------------------------------------------------------
-  final encryptionKey = await sl<GetEncryptionKey>().call();
-
-  // -------------------------------------------------------------------------
-  // Notes repository + use cases
-  // -------------------------------------------------------------------------
   sl.registerLazySingleton<NoteRepository>(
-    () => NoteRepositoryImpl(db: sl(), encryptionKey: encryptionKey),
+    () => NoteRepositoryImpl(db: sl()),
   );
 
   sl.registerLazySingleton(() => GetNotes(sl()));

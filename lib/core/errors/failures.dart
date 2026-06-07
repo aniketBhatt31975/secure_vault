@@ -14,15 +14,3 @@ class StorageFailure extends Failure {
 class EncryptionFailure extends Failure {
   const EncryptionFailure(super.message);
 }
-
-class BiometricFailure extends Failure {
-  const BiometricFailure(super.message);
-}
-
-class RootedDeviceFailure extends Failure {
-  const RootedDeviceFailure() : super('Device is rooted or jailbroken');
-}
-
-class KeystoreFailure extends Failure {
-  const KeystoreFailure(super.message);
-}

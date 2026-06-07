@@ -31,9 +31,6 @@ dependencies:
   encrypt: ^5.0.3
   pointycastle: ^3.9.1
 
-  # Biometric + Secure Storage
-  local_auth: ^2.3.0
-  flutter_secure_storage: ^9.2.4
 
   # Utilities
   path_provider: ^2.1.5
