@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
+import '../../../../core/utils/result.dart';
 import '../../domain/entities/note.dart';
 import '../../domain/usecases/create_note.dart';
 import '../../domain/usecases/delete_note.dart';
@@ -29,12 +30,12 @@ class NotesCubit extends Cubit<NotesState> {
        super(NotesInitial());
 
   Future<void> loadNotes() async {
-    try {
-      emit(NotesLoading());
-      final notes = await _getNotes.call();
-      emit(NotesLoaded(notes));
-    } catch (e) {
-      emit(NotesError(e.toString()));
+    emit(NotesLoading());
+    switch (await _getNotes.call()) {
+      case Ok(:final data):
+        emit(NotesLoaded(data));
+      case Err(:final failure):
+        emit(NotesError(failure.message));
     }
   }
 
@@ -50,18 +51,30 @@ class NotesCubit extends Cubit<NotesState> {
       createdAt: now,
       updatedAt: now,
     );
-    await _createNote.call(note);
-    await loadNotes();
+    switch (await _createNote.call(note)) {
+      case Ok():
+        await loadNotes();
+      case Err(:final failure):
+        emit(NotesError(failure.message));
+    }
   }
 
   Future<void> updateNote(Note note) async {
-    await _updateNote.call(note.copyWith(updatedAt: DateTime.now()));
-    await loadNotes();
+    switch (await _updateNote.call(note.copyWith(updatedAt: DateTime.now()))) {
+      case Ok():
+        await loadNotes();
+      case Err(:final failure):
+        emit(NotesError(failure.message));
+    }
   }
 
   Future<void> deleteNote(String id) async {
-    await _deleteNote.call(id);
-    await loadNotes();
+    switch (await _deleteNote.call(id)) {
+      case Ok():
+        await loadNotes();
+      case Err(:final failure):
+        emit(NotesError(failure.message));
+    }
   }
 
   Future<void> search(String query) async {
@@ -69,16 +82,20 @@ class NotesCubit extends Cubit<NotesState> {
       await loadNotes();
       return;
     }
-    try {
-      final notes = await _searchNotes.call(query);
-      emit(NotesLoaded(notes));
-    } catch (e) {
-      emit(NotesError(e.toString()));
+    switch (await _searchNotes.call(query)) {
+      case Ok(:final data):
+        emit(NotesLoaded(data));
+      case Err(:final failure):
+        emit(NotesError(failure.message));
     }
   }
 
   Future<void> togglePin(Note note) async {
-    await _updateNote.call(note.copyWith(isPinned: !note.isPinned));
-    await loadNotes();
+    switch (await _updateNote.call(note.copyWith(isPinned: !note.isPinned))) {
+      case Ok():
+        await loadNotes();
+      case Err(:final failure):
+        emit(NotesError(failure.message));
+    }
   }
 }

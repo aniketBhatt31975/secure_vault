@@ -6,7 +6,7 @@ import 'package:secure_vault/features/notes/presentation/cubit/notes_cubit.dart'
 import '../../features/notes/presentation/screens/notes_list_screen.dart';
 import '../../features/notes/presentation/screens/note_detail_screen.dart';
 import '../../features/notes/presentation/screens/note_editor_screen.dart';
-import '../../features/settings/presentation/screens/settings_screen.dart';
+
 import 'route_names.dart';
 
 final appRouter = GoRouter(
@@ -61,10 +61,6 @@ final appRouter = GoRouter(
           ],
         ),
       ],
-    ),
-    GoRoute(
-      path: RouteNames.settings,
-      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );

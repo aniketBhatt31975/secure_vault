@@ -35,16 +35,20 @@ class NotesTable extends Table {
 
 @DriftDatabase(tables: [NotesTable])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase._() : super(_openConnection());
+  AppDatabase() : super(_openConnection());
 
-  static final _instance = AppDatabase._();
+  // static final _instance = AppDatabase._();
 
-  factory AppDatabase() {
-    return _instance;
-  }
+  // factory AppDatabase() {
+  //   return _instance;
+  // }
 
   @override
   int get schemaVersion => 1;
+
+  // @override
+  // // TODO: implement migration
+  // MigrationStrategy get migration => super.migration;
 }
 
 LazyDatabase _openConnection() {
@@ -74,6 +78,8 @@ class DriftDatasource implements DbInterface {
           await (_db.select(_db.notesTable)
             ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)])).get();
       return rows.map(_rowToModel).toList();
+    } on DriftWrappedException catch (e) {
+      throw StorageException(e.message);
     } catch (e) {
       throw StorageException('DriftGet failed: $e');
     }
@@ -85,7 +91,10 @@ class DriftDatasource implements DbInterface {
       final row =
           await (_db.select(_db.notesTable)
             ..where((t) => t.id.equals(id))).getSingleOrNull();
+
       return row == null ? null : _rowToModel(row);
+    } on DriftWrappedException catch (e) {
+      throw StorageException(e.message);
     } catch (e) {
       throw StorageException('DriftGetById failed: $e');
     }
@@ -95,6 +104,8 @@ class DriftDatasource implements DbInterface {
   Future<void> insertNote(NoteModel note) async {
     try {
       await _db.into(_db.notesTable).insert(_modelToCompanion(note));
+    } on DriftWrappedException catch (e) {
+      throw StorageException(e.message);
     } catch (e) {
       throw StorageException('DriftInsert failed: $e');
     }
@@ -105,6 +116,8 @@ class DriftDatasource implements DbInterface {
     try {
       await (_db.update(_db.notesTable)
         ..where((t) => t.id.equals(note.id))).write(_modelToCompanion(note));
+    } on DriftWrappedException catch (e) {
+      throw StorageException(e.message);
     } catch (e) {
       throw StorageException('DriftUpdate failed: $e');
     }
@@ -114,6 +127,8 @@ class DriftDatasource implements DbInterface {
   Future<void> deleteNote(String id) async {
     try {
       await (_db.delete(_db.notesTable)..where((t) => t.id.equals(id))).go();
+    } on DriftWrappedException catch (e) {
+      throw StorageException(e.message);
     } catch (e) {
       throw StorageException('DriftDelete failed: $e');
     }
@@ -126,6 +141,8 @@ class DriftDatasource implements DbInterface {
           await (_db.select(_db.notesTable)
             ..where((t) => t.title.contains(query))).get();
       return rows.map(_rowToModel).toList();
+    } on DriftWrappedException catch (e) {
+      throw StorageException(e.message);
     } catch (e) {
       throw StorageException('DriftSearch failed: $e');
     }

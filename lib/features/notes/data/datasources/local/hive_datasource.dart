@@ -9,6 +9,7 @@ class HiveDatasource implements DbInterface {
 
   @override
   Future<void> init() async {
+    await Hive.initFlutter();
     _box = await Hive.openBox<Map>(AppConstants.hiveNotesBox);
   }
 

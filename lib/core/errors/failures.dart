@@ -14,3 +14,11 @@ class StorageFailure extends Failure {
 class EncryptionFailure extends Failure {
   const EncryptionFailure(super.message);
 }
+
+class NotFoundFailure extends Failure {
+  const NotFoundFailure(super.message);
+}
+
+class UnknownFailure extends Failure {
+  const UnknownFailure(super.message);
+}

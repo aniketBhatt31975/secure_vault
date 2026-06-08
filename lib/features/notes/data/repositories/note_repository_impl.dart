@@ -1,6 +1,8 @@
+import '../../../../core/errors/exceptions.dart';
+import '../../../../core/errors/failures.dart';
+import '../../../../core/utils/result.dart';
 import '../../domain/entities/note.dart';
 import '../../domain/repositories/note_repository.dart';
-import '../../../../core/errors/exceptions.dart';
 import '../datasources/local/db_interface.dart';
 import '../models/note_model.dart';
 
@@ -10,36 +12,76 @@ class NoteRepositoryImpl implements NoteRepository {
   NoteRepositoryImpl({required this.db});
 
   @override
-  Future<List<Note>> getNotes() async {
-    final models = await db.getNotes();
-    return models.map((e) => _toEntity(e)).toList();
+  Future<Result<List<Note>>> getNotes() async {
+    try {
+      final models = await db.getNotes();
+      return Ok(models.map(_toEntity).toList());
+    } on StorageException catch (e) {
+      return Err(StorageFailure(e.message));
+    } catch (e) {
+      return Err(UnknownFailure(e.toString()));
+    }
   }
 
   @override
-  Future<Note> getNoteById(String id) async {
-    final model = await db.getNoteById(id);
-    if (model == null) throw StorageException('Note not found: $id');
-    return _toEntity(model);
+  Future<Result<Note>> getNoteById(String id) async {
+    try {
+      final model = await db.getNoteById(id);
+      if (model == null) return Err(NotFoundFailure('Note not found: $id'));
+      return Ok(_toEntity(model));
+    } on StorageException catch (e) {
+      return Err(StorageFailure(e.message));
+    } catch (e) {
+      return Err(UnknownFailure(e.toString()));
+    }
   }
 
   @override
-  Future<void> createNote(Note note) async {
-    await db.insertNote(NoteModel.fromEntity(note));
+  Future<Result<void>> createNote(Note note) async {
+    try {
+      await db.insertNote(NoteModel.fromEntity(note));
+      return Ok(null);
+    } on StorageException catch (e) {
+      return Err(StorageFailure(e.message));
+    } catch (e) {
+      return Err(UnknownFailure(e.toString()));
+    }
   }
 
   @override
-  Future<void> updateNote(Note note) async {
-    await db.updateNote(NoteModel.fromEntity(note));
+  Future<Result<void>> updateNote(Note note) async {
+    try {
+      await db.updateNote(NoteModel.fromEntity(note));
+      return Ok(null);
+    } on StorageException catch (e) {
+      return Err(StorageFailure(e.message));
+    } catch (e) {
+      return Err(UnknownFailure(e.toString()));
+    }
   }
 
   @override
-  Future<void> deleteNote(String id) => db.deleteNote(id);
+  Future<Result<void>> deleteNote(String id) async {
+    try {
+      await db.deleteNote(id);
+      return Ok(null);
+    } on StorageException catch (e) {
+      return Err(StorageFailure(e.message));
+    } catch (e) {
+      return Err(UnknownFailure(e.toString()));
+    }
+  }
 
   @override
-  Future<List<Note>> searchNotes(String query) async {
-    final all = await getNotes();
-    final lower = query.toLowerCase();
-    return all.where((n) => n.title.toLowerCase().contains(lower)).toList();
+  Future<Result<List<Note>>> searchNotes(String query) async {
+    final result = await getNotes();
+    if (result is Err<List<Note>>) return result;
+    final data = (result as Ok<List<Note>>).data;
+    return Ok(
+      data
+          .where((n) => n.title.toLowerCase().contains(query.toLowerCase()))
+          .toList(),
+    );
   }
 
   Note _toEntity(NoteModel model) => Note(
