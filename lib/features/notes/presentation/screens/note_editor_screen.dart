@@ -44,9 +44,9 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     final content = _contentController.text.trim();
 
     if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Title cannot be empty')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Title cannot be empty')));
       return;
     }
 
@@ -65,9 +65,9 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       if (mounted) context.pop();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Save failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Save failed: $e')));
         setState(() => _saving = false);
       }
     }
@@ -87,18 +87,18 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
             actions: [
               _saving
                   ? const Padding(
-                      padding: EdgeInsets.all(14),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : IconButton(
-                      icon: const Icon(Icons.check),
-                      tooltip: 'Save',
-                      onPressed: _save,
+                    padding: EdgeInsets.all(14),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
+                  )
+                  : IconButton(
+                    icon: const Icon(Icons.check),
+                    tooltip: 'Save',
+                    onPressed: _save,
+                  ),
             ],
           ),
           body: Padding(

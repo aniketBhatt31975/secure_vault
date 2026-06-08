@@ -33,17 +33,18 @@ class _NotesListScreenState extends State<NotesListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _searching
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Search notes…',
-                  border: InputBorder.none,
-                ),
-                onChanged: (q) => context.read<NotesCubit>().search(q),
-              )
-            : const Text('Secure Vault'),
+        title:
+            _searching
+                ? TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Search notes…',
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (q) => context.read<NotesCubit>().search(q),
+                )
+                : const Text('Secure Vault'),
         actions: [
           IconButton(
             icon: Icon(_searching ? Icons.close : Icons.search),
@@ -99,25 +100,29 @@ class _NotesListScreenState extends State<NotesListScreen> {
               children: [
                 if (pinned.isNotEmpty) ...[
                   _SectionHeader('Pinned'),
-                  ...pinned.map((note) => NoteCard(
-                        key: ValueKey(note.id),
-                        note: note,
-                        onTap: () => context.push('/notes/${note.id}'),
-                        onDelete: () => _confirmDelete(context, note.id),
-                        onTogglePin: () =>
-                            context.read<NotesCubit>().togglePin(note),
-                      )),
+                  ...pinned.map(
+                    (note) => NoteCard(
+                      key: ValueKey(note.id),
+                      note: note,
+                      onTap: () => context.push('/notes/${note.id}'),
+                      onDelete: () => _confirmDelete(context, note.id),
+                      onTogglePin:
+                          () => context.read<NotesCubit>().togglePin(note),
+                    ),
+                  ),
                 ],
                 if (unpinned.isNotEmpty) ...[
                   if (pinned.isNotEmpty) _SectionHeader('Others'),
-                  ...unpinned.map((note) => NoteCard(
-                        key: ValueKey(note.id),
-                        note: note,
-                        onTap: () => context.push('/notes/${note.id}'),
-                        onDelete: () => _confirmDelete(context, note.id),
-                        onTogglePin: () =>
-                            context.read<NotesCubit>().togglePin(note),
-                      )),
+                  ...unpinned.map(
+                    (note) => NoteCard(
+                      key: ValueKey(note.id),
+                      note: note,
+                      onTap: () => context.push('/notes/${note.id}'),
+                      onDelete: () => _confirmDelete(context, note.id),
+                      onTogglePin:
+                          () => context.read<NotesCubit>().togglePin(note),
+                    ),
+                  ),
                 ],
               ],
             );
@@ -136,23 +141,24 @@ class _NotesListScreenState extends State<NotesListScreen> {
   void _confirmDelete(BuildContext context, String id) {
     showDialog<void>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Delete note?'),
-        content: const Text('This cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Delete note?'),
+            content: const Text('This cannot be undone.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  context.read<NotesCubit>().deleteNote(id);
+                },
+                child: const Text('Delete'),
+              ),
+            ],
           ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.read<NotesCubit>().deleteNote(id);
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -169,8 +175,8 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
     );
   }
